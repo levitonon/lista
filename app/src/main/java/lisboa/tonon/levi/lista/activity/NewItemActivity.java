@@ -10,19 +10,20 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import lisboa.tonon.levi.lista.R;
 
 public class NewItemActivity extends AppCompatActivity {
 
+    // Código para identificar a requisição de seleção de imagem
     static int PHOTO_PICKER_REQUEST = 1;
+
+    // Armazenar URI da imagem selecionada
     Uri photoSelected = null;
 
     @Override
@@ -35,58 +36,70 @@ public class NewItemActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        // Configuração do botão de selecionar uma foto
         ImageButton imgCI = findViewById(R.id.imbCl);
         imgCI.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                 photoPickerIntent.setType("image/*");
-                 startActivityForResult(photoPickerIntent, PHOTO_PICKER_REQUEST);
+                // Intent que abre os documentos para selecionar imagem
+                Intent photoPickerIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                photoPickerIntent.setType("image/*"); // Define o tipo de arquivo como imagem
+                startActivityForResult(photoPickerIntent, PHOTO_PICKER_REQUEST);
             }
         });
-        Button btnAddItem = findViewById(R.id.btnAddItem);
 
+        // Configuração do botão para adicionar
+        Button btnAddItem = findViewById(R.id.btnAddItem);
         btnAddItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                // Verifica se uma foto foi selecionada
                 if (photoSelected == null) {
-                        Toast.makeText(NewItemActivity.this, "É necessário selecionar uma imagem!", Toast.LENGTH_LONG).show();
-                        return;
+                    Toast.makeText(NewItemActivity.this, "É necessário selecionar uma imagem!", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                // Captura o título do item
+                EditText etTitle = findViewById(R.id.etTitle);
+                String title = etTitle.getText().toString();
+                // Verifica se o título foi preenchido
+                if (title.isEmpty()) {
+                    Toast.makeText(NewItemActivity.this, "É necessário inserir um título", Toast.LENGTH_LONG).show();
+                    return;
+                }
+                // Captura a descrição
+                EditText etDesc = findViewById(R.id.etDesc);
+                String description = etDesc.getText().toString();
+                // Verifica se a descrição foi preenchida
+                if (description.isEmpty()) {
+                    Toast.makeText(NewItemActivity.this, "É necessário inserir uma descrição", Toast.LENGTH_LONG).show();
+                    return;
                 }
 
-                 EditText etTitle = findViewById(R.id.etTitle);
-                 String title = etTitle.getText().toString();
-                 if (title.isEmpty()) {
-                 Toast.makeText(NewItemActivity.this, "É necessário inserir um título", Toast.LENGTH_LONG).show();
-                 return;
-                 }
-
-                 EditText etDesc = findViewById(R.id.etDesc);
-                 String description = etDesc.getText().toString();
-                 if (description.isEmpty()) {
-                 Toast.makeText(NewItemActivity.this, "É necessário inserir uma descrição", Toast.LENGTH_LONG).show();
-                 return;
-                 }
-
-                 Intent i = new Intent();
-                 i.setData(photoSelected);
-                 i.putExtra("title", title);
-                 i.putExtra("description", description);
-                 setResult(Activity.RESULT_OK, i);
-                 finish();
+                Intent i = new Intent();
+                i.setData(photoSelected); // Adiciona a URI da imagem
+                i.putExtra("title", title); // Adiciona o título
+                i.putExtra("description", description); // Adiciona a descrição
+                
+                // Após sucesso, finaliza a Activity
+                setResult(Activity.RESULT_OK, i);
+                finish();
             }
         });
     }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == PHOTO_PICKER_REQUEST) {
-            if(resultCode == Activity.RESULT_OK) {photoSelected = data.getData();
-                 ImageView imvfotoPreview = findViewById(R.id.imvPhotoPreview);
-                    imvfotoPreview.setImageURI(photoSelected);
-
- }
- }
-}
+        // Verifica se o resultado é do seletor de imagem
+        if (requestCode == PHOTO_PICKER_REQUEST) {
+            if (resultCode == Activity.RESULT_OK) {
+                // Armazena a URI da imagem
+                photoSelected = data.getData();
+                // Exibe a imagem selecionada em uma ImageView como pré-visualização
+                ImageView imvFotoPreview = findViewById(R.id.imvPhotoPreview);
+                imvFotoPreview.setImageURI(photoSelected);
+            }
+        }
+    }
 }
