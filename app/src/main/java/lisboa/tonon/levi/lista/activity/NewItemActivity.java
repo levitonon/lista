@@ -36,6 +36,7 @@ public class NewItemActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        //Obtém URI dentro de ViewModel
         NewItemActivityViewModel vm = new ViewModelProvider( this ).get(
                 NewItemActivityViewModel.class );
 
@@ -107,7 +108,7 @@ public class NewItemActivity extends AppCompatActivity {
                 // Exibe a imagem selecionada em uma ImageView como pré-visualização
                 ImageView imvFotoPreview = findViewById(R.id.imvPhotoPreview);
                 imvFotoPreview.setImageURI(photoSelected);
-
+                //Escolhe imagem e armazena
                 NewItemActivityViewModel vm = new ViewModelProvider( this
                 ).get( NewItemActivityViewModel.class );
                 vm.setSelectPhotoLocation(photoSelected);

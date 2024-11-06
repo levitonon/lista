@@ -85,13 +85,14 @@ public class MainActivity extends AppCompatActivity {
                 myItem.title = data.getStringExtra("title");       
                 myItem.description = data.getStringExtra("description");
                 Uri selectedPhotoURI = data.getData();
-
+                //Carrega e transforma a imagem em bitmap
                  try {
                  Bitmap photo = Util.getBitmap( MainActivity.this, selectedPhotoURI, 100, 100 );
                     myItem.photo = photo;
                  } catch (FileNotFoundException e) {
                     e.printStackTrace();
                  }
+                 //Obtém lista e guarda novo item dentro dela
                 MainActivityViewModel vm = new ViewModelProvider( this ).get(
                         MainActivityViewModel.class );
                 List<MyItem> itens = vm.getItens();
