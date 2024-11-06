@@ -16,15 +16,15 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.lifecycle.ViewModelProvider;
+
 import lisboa.tonon.levi.lista.R;
+import lisboa.tonon.levi.lista.model.NewItemActivityViewModel;
 
 public class NewItemActivity extends AppCompatActivity {
 
     // Código para identificar a requisição de seleção de imagem
     static int PHOTO_PICKER_REQUEST = 1;
-
-    // Armazenar URI da imagem selecionada
-    Uri photoSelected = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,7 +36,14 @@ public class NewItemActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+        NewItemActivityViewModel vm = new ViewModelProvider( this ).get(
+                NewItemActivityViewModel.class );
 
+         Uri selectPhotoLocation = vm.getSelectPhotoLocation();
+         if(selectPhotoLocation != null) {
+             ImageView imvfotoPreview = findViewById(R.id.imvPhotoPreview);
+            imvfotoPreview.setImageURI(selectPhotoLocation);
+             }
         // Configuração do botão de selecionar uma foto
         ImageButton imgCI = findViewById(R.id.imbCl);
         imgCI.setOnClickListener(new View.OnClickListener() {
@@ -54,6 +61,7 @@ public class NewItemActivity extends AppCompatActivity {
         btnAddItem.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Uri photoSelected = vm.getSelectPhotoLocation();
                 // Verifica se uma foto foi selecionada
                 if (photoSelected == null) {
                     Toast.makeText(NewItemActivity.this, "É necessário selecionar uma imagem!", Toast.LENGTH_LONG).show();
@@ -95,10 +103,14 @@ public class NewItemActivity extends AppCompatActivity {
         if (requestCode == PHOTO_PICKER_REQUEST) {
             if (resultCode == Activity.RESULT_OK) {
                 // Armazena a URI da imagem
-                photoSelected = data.getData();
+                Uri photoSelected = data.getData();
                 // Exibe a imagem selecionada em uma ImageView como pré-visualização
                 ImageView imvFotoPreview = findViewById(R.id.imvPhotoPreview);
                 imvFotoPreview.setImageURI(photoSelected);
+
+                NewItemActivityViewModel vm = new ViewModelProvider( this
+                ).get( NewItemActivityViewModel.class );
+                vm.setSelectPhotoLocation(photoSelected);
             }
         }
     }
